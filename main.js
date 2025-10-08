@@ -11,7 +11,7 @@ onload = () => {
     if (flowerDiv) {
       flowerDiv.addEventListener('mouseover', function () {
         const tooltip = document.createElement('div');
-        tooltip.textContent = 'Contraseña: leyleymybeloved';
+        tooltip.textContent = 'Siempre te amaré, mi querida Lily <3';
         tooltip.style.position = 'absolute';
         tooltip.style.color = '#7e7e7e';
         tooltip.style.padding = '5px';
