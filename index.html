@@ -50,6 +50,103 @@
             user-select: none;
         }
 
+        
+        /* Estilos para la pantalla de bienvenida */
+        #welcomeScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--color-fondo-gradiente-1) 0%, var(--color-fondo-gradiente-2) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #welcomeScreen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .welcome-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px var(--color-sombra-fuerte);
+            animation: fadeInScale 0.6s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .welcome-title {
+            font-family: var(--fuente-titulo);
+            font-size: clamp(2.5rem, 7vw, 4rem);
+            color: var(--color-sello);
+            margin: 0 0 20px 0;
+            text-shadow: 2px 2px 8px var(--color-sombra-suave);
+        }
+
+        .welcome-subtitle {
+            font-family: var(--fuente-fecha);
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            color: var(--color-texto);
+            margin: 0 0 30px 0;
+            font-weight: bold;
+        }
+
+        .welcome-text {
+            font-family: var(--fuente-fecha);
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            color: var(--color-texto);
+            line-height: 1.8;
+            margin: 0 0 40px 0;
+        }
+
+        .welcome-button {
+            background: var(--color-sello);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.2rem;
+            font-family: var(--fuente-fecha);
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px var(--color-sombra-suave);
+        }
+
+        .welcome-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px var(--color-sombra-fuerte);
+            background: var(--color-sello-especial);
+        }
+
+        /* Contenido principal oculto inicialmente */
+        #mainContent {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #mainContent.visible {
+            opacity: 1;
+        }
+
         .header {
             text-align: center;
             margin-bottom: 30px;
@@ -261,7 +358,7 @@
             pointer-events: none;
             background: var(--color-carta);
             border-radius: 8px;
-            padding: 15px;
+            padding: 20px;
             box-sizing: border-box;
             background-size: cover;
             background-position: center;
@@ -297,6 +394,24 @@
                     25% 96%, 6% 98%, 0% 85%, 2% 70%,
                     0% 55%, 3% 40%, 0% 25%, 1% 10%);
 
+        }
+
+        .contenido::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .contenido::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+
+        .contenido::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .contenido::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
         }
 
         .carta::before {
@@ -524,70 +639,258 @@
         }
 
         @media (max-width: 768px) {
-            .calendar-grid {
-                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: clamp(1.5rem, 6vw, 2.5rem);
+                margin-bottom: 15px;
+            }
+
+            .month-navigation {
                 gap: 15px;
-            }
-
-            .envoltura-sobre {
-                width: 60px;
-                height: 42px;
-            }
-
-            .month-display {
-                font-size: 2rem;
-                min-width: 150px;
+                margin-bottom: 20px;
             }
 
             .nav-arrow {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
             }
 
-            .contenido .saludo {
-                font-size: 1.3rem;
+            .month-display {
+                font-size: 1.5rem;
+                min-width: 120px;
             }
 
-            .contenido .cuerpo {
+            .calendar-grid {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+                gap: 12px;
+                padding: 0 10px;
+            }
+
+            .day-number {
                 font-size: 1rem;
             }
 
+            .envoltura-sobre {
+                width: 55px;
+                height: 38px;
+            }
+
+            .corazon {
+                width: 10px;
+                height: 10px;
+            }
+
+            .corazon::before,
+            .corazon::after {
+                width: 10px;
+                height: 10px;
+            }
+
+            .corazon::before {
+                top: -5px;
+            }
+
+            .corazon::after {
+                left: -5px;
+            }
+
+            /* Animaciones optimizadas para móvil */
+            @keyframes animacion-abrir-carta {
+                0% {
+                    transform: translate(-50%, -50%) scale(0);
+                    opacity: 0;
+                }
+
+                50% {
+                    transform: translate(-50%, -50%) scale(1.05);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 1;
+                    width: 95vw;
+                    height: 85vh;
+                    max-width: 95vw;
+                    max-height: 85vh;
+                }
+            }
+
+            @keyframes animacion-cerrar-carta {
+                0% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 1;
+                    width: 95vw;
+                    height: 85vh;
+                    max-width: 95vw;
+                    max-height: 85vh;
+                }
+
+                50% {
+                    transform: translate(-50%, -50%) scale(1.05);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translate(-50%, -50%) scale(0);
+                    opacity: 0;
+                    width: 55px;
+                    height: 38px;
+                }
+            }
+
+            @keyframes animacion-abrir-carta-normal {
+                0% {
+                    transform: translate(-50%, -50%) scale(0);
+                    opacity: 0;
+                }
+
+                50% {
+                    transform: translate(-50%, -50%) scale(1.05);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 1;
+                    width: 90vw;
+                    height: auto;
+                    max-width: 90vw;
+                    max-height: 70vh;
+                    min-height: 250px;
+                }
+            }
+
+            @keyframes animacion-cerrar-carta-normal {
+                0% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 1;
+                    width: 90vw;
+                    height: auto;
+                    max-width: 90vw;
+                    max-height: 70vh;
+                }
+
+                50% {
+                    transform: translate(-50%, -50%) scale(1.05);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translate(-50%, -50%) scale(0);
+                    opacity: 0;
+                }
+            }
+
+            .contenido {
+                padding: 10px;
+                padding-right: 10px;
+            }
+
+            .contenido .fecha {
+                font-size: 0.85rem;
+                margin-bottom: 10px;
+            }
+
+            .contenido .saludo {
+                font-size: 1.4rem;
+                margin-bottom: 8px;
+            }
+
+            .contenido .cuerpo,
+            .contenido .cuerpo-feb14 {
+                font-size: 1.1rem;
+                line-height: 1.5;
+                margin-bottom: 12px;
+            }
+
             .contenido .firma {
-                font-size: 1.3rem;
-                text-align: center;
+                font-size: 1.5rem;
             }
 
             .bloque-firma {
                 flex-direction: column;
                 align-items: center;
                 gap: 10px;
+                margin-top: 15px;
             }
 
             .imagen-recuerdo {
-                width: 70px;
+                width: 80px;
+            }
+        }
+
+        /* Para pantallas muy pequeñas */
+        @media (max-width: 480px) {
+            .calendar-grid {
+                grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+                gap: 10px;
+            }
+
+            .envoltura-sobre {
+                width: 50px;
+                height: 35px;
+            }
+
+            .day-number {
+                font-size: 0.9rem;
+            }
+
+            .month-display {
+                font-size: 1.3rem;
+            }
+
+            .contenido .saludo {
+                font-size: 1.2rem;
+            }
+
+            .contenido .cuerpo,
+            .contenido .cuerpo-feb14 {
+                font-size: 1rem;
+            }
+
+            .contenido .firma {
+                font-size: 1.3rem;
             }
         }
     </style>
 </head>
 
 
-<!--
-<body>
-    <div class="overlay" id="overlay"></div>
 
-    <div class="header">
-        <h1>Un te amo por cada dia, para mi amor ‹3</h1>
-        <a href="/flores.html">💌</a>
-        <div class="month-navigation">
-            <button class="nav-arrow" id="prevMonth">‹</button>
-            <div class="month-display" id="monthDisplay">Muak</div>
-            <button class="nav-arrow" id="nextMonth">›</button>
+<body>
+    <div id="welcomeScreen">
+        <div class="welcome-container">
+            <h1 class="welcome-title">No abrir hasta San Valentín</h1>
+            <p class="welcome-subtitle">Algo te espera...</p>
+            <p class="welcome-text">
+                <p>¡Hola Lily! Si estás leyendo esto otro día que no sea 14 de febrero, por favor, retirate de aqui</p><br>
+                <p>En caso de que no vayamos a llegar al propio 14 de febrero, entonces si puedes continuar, abra su regalo, de manera adelantada ^^</p> <br>
+                <p>- Alex</p> <br>
+            </p>
+            <button class="welcome-button" onclick="mostrarCalendario()">Abrir mi regalo ♥</button>
         </div>
     </div>
 
-    <div class="calendar-grid" id="calendarGrid">
-        
+    <!-- Contenido principal del calendario -->
+    <div id="mainContent">
+        <div class="overlay" id="overlay"></div>
+
+        <div class="header">
+            <h1>Un "te amo" por cada día, para ti, mi amor ‹3</h1>
+            <a href="/flores.html">🌹</a>
+            <div class="month-navigation">
+                <button class="nav-arrow" id="prevMonth">‹</button>
+                <div class="month-display" id="monthDisplay">Muak</div>
+                <button class="nav-arrow" id="nextMonth">›</button>
+            </div>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid"></div>
     </div>
 
     <script>
@@ -637,22 +940,86 @@
             octubre 7: Amo tu forma tan linda de amar.
             octubre 8: Amo tu genuina manera de ver el mundo, le das color a lo grisáceo.
             octubre 9: Amo tu forma de ser, me vuelves loco, y me enamoras cada vez que hablamos.
-            octubre 10: Amo tus ojos, son preciosos, y el delineado que agregas aumenta mas su belleza.
+            octubre 10: Amo tu delineado de los ojos, aumenta aún mas su belleza, asi como el maquillaje que te pones, no necesitas llevarlo pues eres perfecta, pero se le ve bien.
             octubre 11: Amo tu boquita preciosa, me encanta su forma y que parezca que tengas como boquita de gato :3.
             octubre 12: Amo tus esfuerzos por mejorar.
             octubre 13: Amo tus audios a cualquier momento del día, pueden subirme el ánimo por completo.
             octubre 14: Amo tu amor por la natuarleza, me haces querer la vida.
             octubre 15: Amo tu manera única de ser, eres una persona increíble.
-            febrero 14: Si estás viendo este mensaje, es porque las cosas salieron mal, y lo nuestro finalmente no pudo ser, es una lástima, ésta página de aqui fue el trabajo que estuve realizando desde que terminamos, debido a que no me permitiste el decirte lo mucho que te amaba, quise hacer esto, para que supieras que nunca dejé de pensar en ti, son casi 900 lineas de código, había sobres con colores de corazón distintos, simbolizando que habría un secreto, pero no te molestes en buscar, aun no lo he hecho, como puedes ver, hay un patron en los mensajes, todos los mensajes de cada mes empiezan igual, noviembre sería "Amo cuando [actividad]", diciembre sería "Te amo porque [razón]", enero sería "Amo que [pensamiento tuyo]" y finalmente febrero tendría distintas citas de libros o momentos juntos, asi que nunca esperes menos de nadie, te amo y te amaré siempre,, feliz san valentín adelantado, espero te haya gustado este regalo, adiós, Leyley <3.
+            octubre 16: Amo tu carrera, amo tu dedicación y pasión por la misma.
+            octubre 17: Amo tu risa, es contagiosa y me hace feliz.
+            octubre 18: Amo tu forma de expresarte, me encanta leerte y escucharte, aunque digas groserias a veces u,u.
+            octubre 19: Amo tus gestos y expresiones, como el decir en voz alta "pq" en vez de "porque" jsjs.
+            octubre 20: Amo lo diferente pero iguales que somos a la vez.
+            octubre 21: Amo tu forma de ser tan dulce y cariñosa, amaría verle diario.
+            octubre 22: Amo tu amor al arte, me encantaría pintar contigo algun día, aunque probablemente yo sea un estorbo.
+            octubre 23: Amo tu autenticidad.
+            octubre 24: Amo tu paciencia, espero puedas seguir siendo paciente conmigo. 
+            octubre 25: Amo tu figura, sin intención de sonar horny, me gusta verle ^^'.
+            octubre 26: Amo la cicatriz de tu hombro, hace que seas aun mas única.
+            octubre 27: Amo tu cabello, recuerdo aun su textura, y con tu nuevo tinte te ves mas preciosa aun, "de rojo te ves bieeeen" (aunque es rosa).
+            octubre 28: Amo tu amor hacia los reptiles, espero podamos tener al barbudo, sería nuestro neuvo nene, ¿Qué nombre le pondrías?.
+            octubre 29: Amo tus pinturas, son una obra de arte, pintadas por otra obra de arte.
+            octubre 30: Amo tus mensajes al despertar, aunque no los haces ya, me ayudaban a iniciar el día.
+            octubre 31: Amo tus ojos que brillan en la penumbra como linternas de calabaza.
+            noviembre 1: Amo cuando me envías fotos, me hace recordar a que hay alguien que, aunque no directamente, me espera.
+            noviembre 2: Amo cuando me cuentas de tu dia, me hace sentir parte de tu vida, o al menos que te acordaste de mi durante el dia.
+            noviembre 3: Amo cuando un mensaje tuyo aparece en mi pantalla, me alegra el día, o al menos parte del mismo.
+            noviembre 4: Amo cuando hago estos mensajes día a día, los mereces todos <3.
+            noviembre 5: Amo cuando charlamos por mensaje, por efímero que sea el momento.
+            noviembre 6: Amo cuando me das las "buenas noches", me hace sentir especial, y que sigo siendo importante :3.
+            noviembre 7: Amo cuando me dices que me cuide, me hace sentir que te importo.
+            noviembre 8: Amo cuando pienso en ti, me hace pensar que tambien piensas tu en mi.
+            noviembre 9: Amo cuando me envías fotos de Apolito, es un nene muy lindo jsjs, Diogenes tambien owo.
+            noviembre 10: Amo cuando haciamos pequeñas actividades en pareja.
+            noviembre 11: Amo cuando interactuamos, aunque sea poco, me encantaría hablar mas contigo!.
+            noviembre 12: Amo cuando veíamos series juntos, extraño esas noches juntos, nos quedó pendiente Danganronpa jsjs.
+            noviembre 13: Amo cuando quedabas dormida y podía escribirte algo para que lo leyeras al despertar.
+            noviembre 14: Amo cuando me decías "te amo" o "te quiero", me hacía sentir tan especial.
+            noviembre 15: Amo cuando planeabamos nuestro futuro juntos.
+            noviembre 16: Amo cuando me hacías sentir especial.
+            noviembre 17: Amo cuando nos pasabamos todo el día jugando jueguitos.
+            noviembre 18: Amo cuando explorabamos por el mundo de Minecraft.
+            noviembre 19: Amo cuando nos la pasabamos hablando todo el día, todos los dias.
+            noviembre 20: Amo cuando me hablabas de tus proyectos de la escuela, y como a veces te estresabas por ellos jsjs <3.
+            noviembre 21: Amo cuando pienso en el día que nos vimos por primera vez (y única de momento xd), sentí que todo había valido la pena.
+            noviembre 22: Amo cuando me pedías ayuda con algo, me hacía sentir útil.
+            noviembre 23: Amo cuando me decías que te gustaba.
+            noviembre 24: Amo cuando hablas conmigo.
+            noviembre 25: Amo cuando me mandas algun meme para intentar hacer platica jsjs.
+            noviembre 26: Amo cuando pienso en nuestro futuro.
+            noviembre 27: Amo cuando escuchaba tus "te amo", aunque ya no lo hagas, espero pueda volver a escuchar esa frase salir de tí.
+            noviembre 28: Amo cuando me dices que soy importante para ti.
+            noviembre 29: Amo cuando me haces algun comentario bonito.
+            noviembre 30: Amo cuando existes, amo tu mera existencia.
+            diciembre 1: Te amo porque eres la persona mas hermosa que he conocido.
+            diciembre 2: Te amo porque me haces querer vivir.
+            diciembre 3: Te amo porque me inspiras a ser mejor.
+            diciembre 4: Te amo porque contigo aprendí lo que es el amor.
+            diciembre 5: Te amo porque me haces ser yo mismo.
+            diciembre 6: Te amo porque somos el complemento del otro.
+            diciembre 7: Te amo porque me diste ganas de vivir mi propia vida.
+            diciembre 8: Te amo porque me haces feliz.
+            diciembre 9: Te amo porque me hiciste apreciar el arte.
+            diciembre 10: Te amo porque eres única.
+            diciembre 11: Te amo porque sin tí no sabría lo que es de verdad el amor genuino.
+            diciembre 12: Te amo porque contigo puedo ser mejor.
+            diciembre 13: Te amo porque contigo no veo imposibles.
+            diciembre 14: Te amo porque eres asombrosa, y nunca te rindes.
+            diciembre 15: Te amo porque en tus ojos veo pasión por lo que te gusta.
+            diciembre 16: Te amo porque eres tú. Felíz aniversario, mi amor <3.
+            febrero 14: Si estás viendo este mensaje, es porque las cosas salieron mal, y lo nuestro finalmente no pudo ser, es una lástima, ésta página de aqui fue el trabajo que estuve realizando desde que terminamos, epieza el 5 de sept porque fue un día despues de mi mensaje, y, debido a que no me permitiste el decirte lo mucho que te amaba en este tiempo, quise hacer esto, para que supieras que nunca dejé de pensar en ti, todos los días, sin falta alguna, escribía un mensaje para ti, en papel, celular, o computadora, había sobres con colores de corazón distintos, simbolizando que habría un secreto que tendrías que buscar para continuar, pero no te molestes en buscar, esa "continuación" no existe,,, es un regalo que me llevó mucho tiempo, tiempo que, incluso sin ser mi pareja, te lo dí, asi que nunca esperes menos de tu próxima pareja, incluso puse tu canción favorita de MM, es un regalo con un nivel de detalle que te mereces tener, te amo y te amaré siempre,,, feliz san valentín adelantado, espero te haya gustado esto,,, éste es el adiós, cuidate, y cumple todas tus metas, hazlo por ambos, te amo, mi Leyley <3.
             `;
+//febrero 14: Si estás viendo este mensaje, es porque las cosas salieron mal, y lo nuestro finalmente no pudo ser, es una lástima, ésta página de aqui fue el trabajo que estuve realizando desde que terminamos, debido a que no me permitiste el decirte lo mucho que te amaba, quise hacer esto, para que supieras que nunca dejé de pensar en ti, son casi 900 lineas de código, había sobres con colores de corazón distintos, simbolizando que habría un secreto, pero no te molestes en buscar, aun no lo he hecho, como puedes ver, hay un patron en los mensajes, todos los mensajes de cada mes empiezan igual, noviembre sería "Amo cuando [actividad]", diciembre sería "Te amo porque [razón]", enero sería "Amo que [pensamiento tuyo]" y finalmente febrero tendría distintas citas de libros o momentos juntos, asi que nunca esperes menos de nadie, te amo y te amaré siempre,,, feliz san valentín adelantado, espero te haya gustado este regalo, adiós, Leyley <3.
 
         const diasEspeciales = [
             { dia: 23, mes: 8, año: 2025 },
             { dia: 30, mes: 10, año: 2025 }, // 30 noviembre 2025 (mes 10 = noviembre)
+            { dia: 16, mes: 11, año: 2025 },
             { dia: 2, mes: 0, año: 2026 },   // 2 enero 2026 (mes 0 = enero)  
-            { dia: 10, mes: 1, año: 2026 }   // 10 febrero 2026 (mes 1 = febrero)
-        ];
+            { dia: 10, mes: 1, año: 2026 },   // 10 febrero 2026 (mes 1 = febrero)
 
+        ];
 
         const mensajes = {};
         mensajesBrutos.split(".").forEach(linea => {
@@ -728,7 +1095,6 @@
 
                 if (mensaje) {
                     const esCartaEspecial = dia === 14 && mesActual === 1 && añoActual === 2026;
-                    const claseCartaEspecial = esCartaEspecial ? '' : 'normal';
 
                     if (esCartaEspecial) {
                         const claseCorazon = esCorazonEspecial(dia, mesActual, añoActual) ? 'corazon especial' : 'corazon';
@@ -743,9 +1109,8 @@
                                     <p class="saludo">Para Leslie,</p>
                                     <p class="cuerpo-feb14">${mensaje}</p>
                                     <div class="bloque-firma">
-                                        <img src="" alt="Aqui hubiera estado una foto juntos jsjs ^^" class="imagen-recuerdo">
+                                        <img src="/placeholder.svg" alt="Aquí hubiera estado una foto juntos jsjs ^^" class="imagen-recuerdo">
                                         <p class="firma">Con mucho amor,<br>Alex</p>
-                                        
                                     </div>
                                 </div>
                             </div>
@@ -766,7 +1131,6 @@
                         `;
                     }
                 } else {
-                    // Sin mensaje - solo sobre sin carta
                     envoltura.innerHTML = `
                     <div class="sobre"></div>
                     <div class="solapa solapa-superior"></div>
@@ -786,7 +1150,6 @@
             agregarEventListeners();
         }
 
-        // Navegación meses con bloqueo del rango
         document.getElementById('prevMonth').addEventListener('click', () => {
             const nuevaFecha = new Date(añoActual, mesActual - 1);
             if (nuevaFecha >= new Date(fechaInicio.getFullYear(), fechaInicio.getMonth())) {
@@ -823,12 +1186,10 @@
 
                     if (isAnimating) return;
 
-                    // Verificar si tiene carta
                     const carta = envoltura.querySelector('.carta');
                     if (!carta) return;
 
                     if (!envoltura.classList.contains('abierto')) {
-                        // Cerrar cualquier carta abierta
                         if (cartaAbierta && cartaAbierta !== envoltura) {
                             cerrarCarta(cartaAbierta);
                         }
@@ -862,7 +1223,6 @@
                 }, { once: true });
             }
 
-            // Cerrar carta al hacer clic en el overlay
             overlay.addEventListener('click', () => {
                 if (cartaAbierta && !isAnimating) {
                     cerrarCarta(cartaAbierta);
@@ -870,7 +1230,6 @@
                 }
             });
 
-            // Cerrar carta con tecla Escape
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && cartaAbierta && !isAnimating) {
                     cerrarCarta(cartaAbierta);
@@ -879,6 +1238,14 @@
             });
         }
 
+        function mostrarCalendario() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('mainContent').classList.add('visible');
+            }, 500);
+        }
+
+
         actualizarCalendario();
     </script>
 
@@ -886,6 +1253,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             const audio = new Audio("seasons.mp3");
             audio.volume = 0.3;
+            audio.loop = true;
 
             const reproducir = () => {
                 audio.play();
@@ -897,11 +1265,5 @@
             document.addEventListener("touchstart", reproducir);
         });
     </script>
-
-
-</body>
--->
-<body>
-    <h1>Le dije que no se ponga a ver owo</h1>
 </body>
 </html>
