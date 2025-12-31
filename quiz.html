@@ -459,7 +459,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" id="content">
         <div class="header">
             <h1>¿Cuánto sabes sobre Alex?</h1>
         </div>
@@ -471,8 +471,7 @@
                     ¡Hola Lily!, me alegra que hayas llegado aquí. ¿Tardaste mucho en ver esas pistas? Espero que no,
                     desde el inicio me dijiste que tiempo no tenías asi que espero no hayas tardado mucho.
                     Por el mismo motivo que no tenías tiempo, he decidido que el regalo de este día no involucraría mi
-                    presencia,
-                    de ese modo podrás tardarte lo que desees, sin preocuparte por mí o por el tiempo ^^.
+                    presencia, de ese modo podrás tardarte lo que desees, sin preocuparte por mí o por el tiempo ^^.
                 </p>
                 <p>
                     Este cuestionario ha sido diseñado especialmente para ti, o mas bien, 
@@ -548,6 +547,14 @@
         </div>
     </div>
 
+    <div class="modal-already" id="modalAlready" style="display: none;">
+        <div class="modal">
+            <h2>Usted ya tomó este test, señorita ^^</h2>
+            <p id="modalQuestion">Ya tomaste el quiz Lily, ¿Querías alterar tus respuestas? Malosa :3</p><br>
+            <p>Usaste <span id="helpCountDisplay"></span> ayudas</p>
+        </div>
+    </div>
+
     <script>
         const questions = [
             {
@@ -558,17 +565,18 @@
                 easterEggs: [
                     { answer: "vazquez", message: "Ese es mi primer apellido >:3" },
                     { answer: "vega", message: "Sería un lindo apellido para mis hijos, ¿no crees?" },
-                    { answer: "santander", message: "Sería un lindo apellido para mis hijos, ¿no crees?" },
+                    { answer: "santander", message: "Lindo apellido, pero no :3" },
                 ]
             },
             {
                 question: "¿Cuál es mi anime favorito?",
                 correctAnswer: "codegeass",
-                hint: "Siempre te he dicho que quiero que lo veamos juntos",
+                hint: "Siempre te he dicho que quiero que lo veamos juntos, mando mensajes en mis estados tambien",
                 correct: "¿Si lo vamos a ver juntos o nadota?",
                 easterEggs: [
                     { answer: "danganronpa", message: "No lo terminamos de ver al final, ¿no? Incorrecto de todos modos"},
                     { answer: "shingeki", message: "Ew, no" },
+                    { answer: "shingekinokyogin", message: "Ew, no"},
                     { answer: "hunterxhunter", message: "Me encanta, pero no es el favorito" }
                 ]
             },
@@ -576,26 +584,27 @@
                 question: "¿Cuál es el nombre de mi gata vaquita?",
                 correctAnswer: "lola",
                 hint: "Empieza con L y es un nombre de 4 letras",
-                correct: "La vaca Lola la vaca Lola, tiene cabeza y tiene cola owo",
+                correct: "La vaca Lola, la vaca Lola, tiene cabeza y tiene cola owo",
                 easterEggs: [
                     { answer: "nikki", message: "Esa es la marrón ^^'" },
                     { answer: "bolillo", message: "¿Bolillo ajolote o bolillo dragón? Está mal de todos modos u.u" },
-                    { answer: "apolo", message: "Que lindo Apolito <3... pero no ^^" }
+                    { answer: "apolo", message: "Que lindo Apolito <3... pero no ^^" },
+                    { answer: "apolito", message: "Que lindo Apolito <3... pero no ^^" }
                 ]
             },
             {
-                question: "¿Cuál es el nombre COMPLETO de mi carrera? (Empieza con Ingenieria en <...>)",
+                question: "Quitando el grado (Licenciatura), ¿Cuál es el nombre COMPLETO de mi carrera? (Empieza con Ingenieria en <...>)",
                 correctAnswer: "ingenieriaendesarrolloygestiondesoftware",
-                hint: "La abreviación sería IDGS, contando los conectores, Ing. en D. y G. de S.",
-                correct: "Imaginate casarte con un ingeniero... just think about it ^^",
+                hint: "La abreviación sería IDGS, si lo quieres abreviar menos... Ing. en D. y G. de S.",
+                correct: "Imaginate casarte con un ingeniero... yo lanzo la ficha, just think about it ^^",
                 easterEggs: [
-                    { answer: "software", message: "Casi, pero te falta algo mas" },
+                    { answer: "software", message: "Empieza con 'Ingeniería' >:3" },
                     { answer: "ingenieriaensoftware", message: "Casi, pero te falta algo mas" },
-                    { answer: "ingenieriaenprogramacion", message: "¿Solo eso te acuerdas? Auch, ese ni siquiera es el nombre"},
+                    { answer: "ingenieriaenprogramacion", message: "¿Solo eso te acuerdas? Auch, ni siquiera te acercas al nombre :/"},
                     { answer: "programacion", message: "Solo eso te acuerdas? Auch"},
                     { answer: "sistemas", message: "No, ¿tan poco recuerdas de mi? Me mega odias :c" },
                     { answer: "ingenieriaensistemas", message: "No, ¿tan poco recuerdas de mi? Me mega odias :c" },
-                    { answer: "ingenieriaentecnologiasdelainformacioneinnovaciondigital", message: "Checaste la página de mi uni? Tramposa >:3, cambió el plan de estudios :b" },
+                    { answer: "ingenieriaentecnologiasdelainformacioneinnovaciondigital", message: "Checaste la página de mi uni? Tramposa >:3, cambió el plan de estudios, no es ese :b" },
                 ]
             },
             {
@@ -605,6 +614,7 @@
                 correct: "Hace calor, buuh",
                 easterEggs: [
                     { answer: "cuernavaca", message: "Un poco mas al lado >:3"},
+                    { answer: "morelos", message: "Ese es el estado xd"},
                     { answer: "xochitepec", message: "Soy el mas duro de Xochitepec, pero no soy de ahi xd" },
                     { answer: "yautepec", message: "Nopi, ¿Al final fuiste a ver tu obra expuesta?" },
                 ]
@@ -613,7 +623,7 @@
                 question: "¿Cual es mi saga de videojuegos favorita?",
                 correctAnswer: "gearsofwar",
                 hint: "Esta pregunta ya te la había hecho antes, y respondiste mal, bleeh :b",
-                correct: "Esta saga me acompañ+o desde los 10 años",
+                correct: "Esta saga me acompañó desde los 10 años",
                 easterEggs: [
                     { answer: "persona", message: "Me encanta, pero no es mi favorita al 100 owo"},
                     { answer: "minecraft", message: "No es saga owo" },
@@ -637,18 +647,80 @@
                 hint: "¿Necesitas pista en serio? Soy unos cuantos meses mas grande que tu u.u",
                 correct: "Una diferencia de edad que me parece linda ^^",
                 easterEggs: [
-                    { answer: "20", message: "¿Tenemos la misma edad? No :b"},
-                    { answer: "19", message: "No... ¿Te gustan menores, eh? ^^" },
+                    { answer: "20", message: "¿Te quedaste en el pasado? Eso fue al poco de conocernos :b"},
+                    { answer: "22", message: "¿Tan viejo me veo? Chale" },
+                    { answer: "19", message: "No... ¿Te gustan menores, eh? ^^' " },
                 ]
             },
             {
-                question: "¿Quién es mi youtuber fravorito?",
+                question: "¿Quién es mi youtuber favorito?",
                 correctAnswer: "elrichmc",
-                hint: "¿Necesitas pista en serio? Soy unos cuantos meses mas grande que tu u.u",
+                hint: "¿cómo no vas a saberlo si es del único youtuber que sabes que veo contenido? Vimos videos de él juntos",
                 correct: "Eyeyeyey, aaquiii el Rich owo, nunca quisiste continuar viendolo conmigo :c",
                 easterEggs: [
                     { answer: "vegetta777", message: "Ya no suelo verlo :c"},
-                    { answer: "rich", message: "Correcto, pero pon el nombre completo >:3" },
+                    { answer: "willyrex", message: "Nunca me encantó en realidad, pero me ví todas sus series jsjs"},
+                    { answer: "rich", message: "Correcto, pero pon el nombre completo o está mal >:3" },
+                ]
+            },
+            {
+                question: "¿Cuál es mi fruta favorita? (en singular)",
+                correctAnswer: "uva",
+                hint: "Haciamos bromas de que nuestros nenes iban a ser de gustos caros por nuestras frutas favoritas, por la fresa y la...?",
+                correct: "Están muy ñam",
+                easterEggs: [
+                    { answer: "fresa", message: "Te gustan mucho las fresas, ¿no? Me agradan a mi también ^^"},
+                    { answer: "manzana" , message: "No es manzana :b"},
+                    { answer: "mango", message: "El mango es rico, pero no es mi favorito"},
+                    { answer: "naranja", message: "¿Cómo que naranja? >:3" }
+                ]
+            },
+            {
+                question: "¿Cuál es mi animal favorito?",
+                correctAnswer: "zorroartico",
+                hint: "Tu animal favorito pertenecía al mismo grupo animal que este",
+                correct: "Es que son todos bonitos jsjsj <3",
+                easterEggs: [
+                    { answer: "zorropolar", message: "Si... pero no es el nombre correcto :b"},
+                    { answer: "zorroalbino" , message: "El albinismo es una condición genética, asi que no, ¡pero casi!"},
+                    { answer: "fenec", message: "Ese era el tuyo, pero no vas mal encaminada"},
+                    { answer: "feneco", message: "Ese era el tuyo, pero no vas mal encaminada"},
+                    { answer: "zorrodeldesierto", message: "Ese era el tuyo, pero no vas mal encaminada"},
+                    { answer: "gato", message: "No es mi favorito, pero me encantan"},
+                    { answer: "perro", message: "No soy mucho de perros de hecho"},
+                    { answer: "iguana", message: "Lindo Apolito, pero no :3" },
+                    { answer: "dragonbarbudo", message: "Larga vida a Bolillo, pero no es mi animal favorito owo" },
+                    { answer: "barbudo", message: "Larga vida a Bolillo, pero no es mi animal favorito owo" },
+                    { answer: "gecko", message: "Ese era mi reptíl favorito, no mi animal favorito, pero te acordaste, que lindo <3" },
+                ]
+            },
+            {
+                question: "¿Cuál es canción favorita de José José?",
+                correctAnswer: "sere",
+                hint: "La tuve por mucho tiempo en mi perfil de ig, además siempre que puedo la menciono",
+                correct: "Soy ese, quien todo lo dió por triunfar, dejando su vida al pasar hecha pedazos",
+                easterEggs: [
+                    { answer: "eltriste", message: "Soy ese, pero no es la canción correcta :b"},
+                    { answer: "volcan" , message: "Soy ese, un volcan apagado, pero no :3"},
+                    { answer: "lanavedelolvido", message: "Yo contigo, no es mi favorita sin embargo :b"},
+                    { answer: "simedejasahora", message: "Yo contigo, no es mi favorita sin embargo :b"},
+                    { answer: "mivida", message: "Yoooooo, pero no >:3"},
+                    { answer: "almohada", message: "Yo cuando pienso en ti, pero no es la correcta, bleeh :b"},
+                    { answer: "quieroperdermecontigo", message: "Yo contigo, pero no es la favorita :b"},
+                    { answer: "voyallenartetoda", message: "El Lunes 28 de José José, pero no es" },
+                    { answer: "payaso", message: "Y es verdad soy un payaso, pero no owo" },
+                    { answer: "preso", message: "De la carcel de tus besos, no es ^^" },
+                ]
+            },
+            {
+                question: "¿Cuál es canción favorita de Persona 5?",
+                correctAnswer: "nomorewhatifs",
+                hint: "Una mezcla de jazz y pop, la voz de Lyn, una increible combinación... en español el nombre sería ' No más y si's ' ^^",
+                correct: "Es una canción muy especial para mi, me encanta",
+                easterEggs: [
+                    { answer: "lifewillchange", message: "Esta es especial owo, pero no"},
+                    { answer: "lastsurprise" , message: "La canción mas conocida diría yo, pero no owo"},
+                    { answer: "riversinthedesert", message: "Es la canción del boss final owo, nopi"},
                 ]
             },
         ];
@@ -675,7 +747,10 @@
         const welcomeScreen = document.getElementById('welcomeScreen');
         const startBtn = document.getElementById('startBtn');
         const modalQuestion = document.getElementById('modalQuestion');
-
+        const modalAlready = document.getElementById('modalAlready');
+        const content = document.getElementById('content');
+        const helpCountDisplay = document.getElementById('helpCountDisplay');
+        helpCountDisplay.textContent = localStorage.getItem("helpCount") || "0";
         function normalizeText(text) {
             return text
                 .toLowerCase()
@@ -712,7 +787,7 @@
             const correctAnswer = normalizeText(question.correctAnswer);
 
             if (userAnswer === correctAnswer) {
-                showFeedback('¡Correcto! Excelente trabajo', 'success');
+                showFeedback(question.correct, 'success');
                 setTimeout(() => {
                     currentQuestionIndex++;
                     if (currentQuestionIndex < questions.length) {
@@ -734,7 +809,7 @@
             }
 
             if (!foundEasterEgg) {
-                showFeedback('Respuesta incorrecta. ¡Inténtalo de nuevo!', 'error');
+                showFeedback('No owo. ¿Me odia? :c', 'error');
             }
         }
 
@@ -753,16 +828,22 @@
 
             document.getElementById('totalQuestions').textContent = questions.length;
             document.getElementById('totalHelps').textContent = helpCount;
-
+            //pregs=13
             let performance = '';
             if (helpCount === 0) {
-                performance = '¡Perfecto! No necesitaste ayuda';
+                performance = 'Lo hiciste muy bien Lily, me hace felíz que me conozcas tanto <3';
             } else if (helpCount <= 2) {
-                performance = '¡Muy bien! Usaste pocas ayudas';
+                performance = 'Ahora me conoces mas, lo hiciste muy bien de todos modos ^^';
             } else if (helpCount <= 4) {
-                performance = 'Buen trabajo, pero puedes mejorar';
+                performance = 'Pedir ayuda no es malo, hiciste un buen trabajo, pero podrías haberlo hecho mejor';
+            } else if (helpCount <= 6) {
+                performance = 'Ayuda en la mitad de las preguntas, hiciste lo que pudiste, y eso está bien ^^';
+            } else if (helpCount <= 8) {
+                performance = 'Ayudas en poco mas de la mitad de las preguntas, creo que al menos me conoces un poco, bien hecho ^^';
+            } else if (helpCount <= 10) {
+                performance = 'Waos, muchas ayudas... ¿Te lo pasaste bien al menos? Ahora me conoces mas ^^';
             } else {
-                performance = 'Completado, sigue practicando';
+                performance = 'Supongo que no me conoces tanto como pensaba... ¿Me odias? :c';
             }
 
             document.getElementById('performanceText').textContent = performance;
@@ -791,10 +872,16 @@
         startBtn.addEventListener('click', () => {
             const alreadyTaken = localStorage.getItem("quizTaken") === "yes";
             if (alreadyTaken) {
-                alert("Ya tomaste el quiz Lily, ¿Querías alterar tus respuestas? Malosa :3");
+                /*alert("Ya tomaste el quiz Lily, ¿Querías alterar tus respuestas? Malosa :3");
+                return;*/
+                welcomeScreen.classList.add('hidden');
+                modalAlready.style.display = 'block';
+                content.style.display = 'none';
                 return;
+            } else{
+                startQuiz();
             }
-            startQuiz();
+            
         });
 
 

@@ -29,6 +29,9 @@ onload = () => {
           tooltip.remove();
         });
       });
+      flowerDiv.addEventListener('click', function () {
+        window.location.href = "/index.html";
+      });
     }
   });
   
