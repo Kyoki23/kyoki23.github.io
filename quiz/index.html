@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz <3 </title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link
+                href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lora:ital@0;1&family=Parisienne&display=swap"
+                rel="stylesheet">
+            <link rel="stylesheet" href="quiz.css">
+            <script src="quiz.js" type="text/javascript" defer></script>
+</head>
+
+<body>
+    <div class="container" id="content">
+        <div class="header">
+            <h1>¿Cuánto sabes sobre Alex?</h1>
+        </div>
+
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-card">
+                <h2>¡Bien hecho!</h2>
+                <p>
+                    ¡Hola Lily!, me alegra que hayas llegado aquí. ¿Tardaste mucho en ver esas pistas? Espero que no,
+                    desde el inicio me dijiste que tiempo no tenías asi que espero no hayas tardado mucho.
+                    Por el mismo motivo que no tenías tiempo, he decidido que el regalo de este día no involucraría mi
+                    presencia, de ese modo podrás tardarte lo que desees, sin preocuparte por mí o por el tiempo ^^.
+                </p>
+                <p>
+                    Este cuestionario ha sido diseñado especialmente para ti, o mas bien,
+                    diseñado para probarte a ti misma acerca de que tanto me conoces a mi.
+                    En este quiz vas a tener que demostrar tu conocimiento respondiendo una serie de preguntas.
+                    ¿Conocimiento de qué? ¡Pues de mí, claro está! owo.
+                </p>
+                <p>
+                    Siempre he pensado que yo te conozco bien, habrá cosas que desconozca claro, pero si me lo has contado, es probable que pueda responderte correctamente,
+                    pero ahora es tu turno de demostrar que tanto sabes sobre mí.
+                    Suelo ser bastante reservado, así que algunas preguntas pueden ser un poco difíciles de contestar,
+                    no te entristezcas si no lo sabes ^^.
+                    Para intentar ayudarte, desde hace algunas semanas he estado dejando pequeñas pistas en mis estados,
+                    espero no te los hayas saltado, muak ;3.
+                </p>
+                <p>
+                    Decidí no ser tan maloso y darte algunas pistas si lo necesitas, para ayudarte en el camino y eso
+                    :3. Asi que si necesitas ayuda da clic en el botón de interrogación en la esquina inferior derecha, 
+                    pero ten en cuenta que esto afectará tu puntuación final.
+                    ¡Mientras menos ayudas necesites, mejor será tu resultado! ¿Y quién sabe? Tal vez haya una sorpresa
+                    si consigues un buen puntaje ;)
+                </p>
+                <p style="font-weight: bold; font-size: 1.3rem; margin-top: 25px;">
+                    ¿Todo listo, señorita?
+                </p>
+                <button class="submit-btn" id="startBtn">¡Listo!</button>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="question-counter" id="questionCounter"></div>
+
+        <div id="quizContainer" style="display: none;">
+            <div class="question-card">
+                <div class="question-text" id="questionText"></div>
+                <div class="input-container">
+                    <input type="text" class="answer-input" id="answerInput"
+                        placeholder="Escribe tu respuesta aquí <3 ">
+                </div>
+                <button class="submit-btn" id="submitBtn">Enviar Respuesta</button>
+                <div class="feedback" id="feedback"></div>
+            </div>
+        </div>
+
+        <div class="completion-screen" id="completionScreen">
+            <h2>¡Felicidades!</h2>
+            <p>Has completado el cuestionario</p>
+            <div class="score-card">
+                <div class="score-item">Preguntas respondidas: <span id="totalQuestions"></span></div>
+                <div class="score-item">Ayudas solicitadas: <span id="totalHelps"></span></div>
+                <div class="score-item" id="performanceText"></div>
+                <button class="submit-btn" id="finishBtn" onclick="window.location.href='../findme/'">Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="help-button" id="helpButton" style="display: none;">
+        ?
+        <span class="help-counter" id="helpCounter">0</span>
+    </button>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2>Solicitar Ayuda</h2>
+            <p id="modalQuestion">¿Quieres una ayuda? Tu contador de ayudas subirá en 1, mientras menos ayudas pidas,
+                mejor resultado tendrás</p>
+            <p class="hint-text" id="hintText"></p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="cancelBtn">Cancelar</button>
+                <button class="modal-btn confirm" id="confirmBtn">Aceptar</button>
+            </div>
+        </div>
+    </div>
+ 
+    <div class="modal-already" id="modalAlready" style="display: none;">
+        <div class="modal">
+            <h2>Usted ya tomó este test, señorita ^^</h2>
+            <p id="modalQuestion">Ya tomaste el quiz Lily, ¿Querías alterar tus respuestas? Malosa :3</p><br>
+            <p>Usaste <span id="helpCountDisplay"></span> ayudas</p>
+            <p>Tu codigo es <span id="codeDisplay"></span></p>
+            <button class="submit-btn" id="finishBtn" onclick="window.location.href='../findme/'">Continuar</button>
+
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const audio = new Audio("alleycat.mp3");
+            audio.volume = 0.3;
+            audio.loop = true;
+
+            const reproducir = () => {
+                audio.play();
+                document.removeEventListener("click", reproducir);
+                document.removeEventListener("touchstart", reproducir);
+            };
+
+            document.addEventListener("click", reproducir);
+            document.addEventListener("touchstart", reproducir);
+        });
+    </script>
+</body>
+
+</html>

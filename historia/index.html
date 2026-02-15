@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Rescate de la Princesa - Libro Interactivo 3D</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+    font-family: 'Georgia', serif;
+    background: linear-gradient(135deg, #e8dcc4 0%, #d4c4a8 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+            perspective: 2500px;
+            overflow: hidden;
+        }
+
+        /* Mensaje de Click actualizado */
+        .click-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #f4e8d8;
+            padding: 20px 40px;
+            border-radius: 12px;
+            font-size: 24px;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .click-message.hidden {
+            opacity: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        /* Sistema de libro real con páginas individuales que se voltean */
+        .book-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 900px;
+            height: 600px;
+            transform-style: preserve-3d;
+            transition: none;
+        }
+
+        .book-container.closed {
+            cursor: pointer;
+        }
+
+        .book {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        /* Lomo del libro */
+        .book-spine {
+            position: absolute;
+            width: 60px;
+            height: 600px;
+            background: linear-gradient(to right, #654321, #8b4513, #654321);
+            left: 450px;
+            transform-origin: left center;
+            transform: rotateY(90deg);
+            border: 3px solid #5a2d0c;
+            box-shadow: -5px 5px 20px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        /* Contratapa (página base siempre visible) */
+        .back-cover {
+            position: absolute;
+            width: 450px;
+            height: 600px;
+            background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+            left: 450px;
+            border: 3px solid #5a2d0c;
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 
+                inset 10px 0 20px rgba(0, 0, 0, 0.3),
+                -5px 5px 30px rgba(0, 0, 0, 0.5);
+            z-index: 0;
+        }
+
+        /* Cada página es independiente y se voltea individualmente */
+        .page {
+            position: absolute;
+            width: 450px;
+            height: 600px;
+            left: 450px;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+            cursor: pointer;
+        }
+
+        /* Cara frontal de cada página */
+        .page-front, .page-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: #f4e8d8;
+            border: 2px solid #c9b896;
+            box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        .page-front {
+            transform: rotateY(0deg);
+        }
+
+        /* Cara trasera de cada página */
+        .page-back {
+            transform: rotateY(180deg);
+        }
+
+        #page-cover .page-back {
+    background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+    border: none;
+}
+
+        /* Estilos de z-index para el orden correcto de apilamiento */
+        .page:nth-child(1) { z-index: 7; } /* Portada */
+        .page:nth-child(2) { z-index: 6; }
+        .page:nth-child(3) { z-index: 5; }
+        .page:nth-child(4) { z-index: 4; }
+        .page:nth-child(5) { z-index: 3; }
+        .page:nth-child(6) { z-index: 2; }
+        .page:nth-child(7) { z-index: 1; }
+
+        /* Clase para voltear la página */
+        .page.flipped {
+            transform: rotateY(-180deg);
+        }
+
+        .page.flipped:not(:first-child) {
+            z-index: 0 !important;
+        }
+
+        .page:first-child.flipped {
+            z-index: -1 !important;
+        }
+
+        
+
+        /* Estilos específicos para la portada */
+        .cover-front {
+            background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+            border: 3px solid #5a2d0c;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            box-shadow: 
+                inset -10px 0 20px rgba(0, 0, 0, 0.3),
+                5px 5px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .cover-front::before {
+            content: '';
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            right: 50px;
+            bottom: 50px;
+            border: 2px solid #d4af37;
+            border-radius: 4px;
+        }
+
+        .book-cover-title {
+            color: #d4af37;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        /* Contenido de las páginas */
+        .page-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .page-content {
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .page.flipping .page-content {
+            opacity: 0;
+        }
+        .page-title {
+            font-size: 28px;
+            color: #8b4513;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .page-description {
+            font-size: 18px;
+            color: #5a2d0c;
+            text-align: center;
+            line-height: 1.8;
+            max-width: 350px;
+        }
+
+        /* Personajes hechos con polígonos CSS estilo Reigns */
+        .character-container {
+            width: 200px;
+            height: 240px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .character-container:hover {
+            transform: translateY(-15px) scale(1.05);
+        }
+
+        /* Princesa - Hecha con polígonos */
+        .princess {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .princess-head {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: #ffd4a3;
+            border-radius: 50%;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 3px solid #d4a574;
+            z-index: 3;
+        }
+
+        .princess-head::before,
+        .princess-head::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #333;
+            border-radius: 50%;
+            top: 30px;
+        }
+
+        .princess-head::before {
+            left: 20px;
+        }
+
+        .princess-head::after {
+            right: 20px;
+        }
+
+        .princess-hair {
+            position: absolute;
+            width: 90px;
+            height: 70px;
+            background: #8b4513;
+            border-radius: 45px 45px 0 0;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        .princess-hair::before,
+        .princess-hair::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            background: #8b4513;
+            border-radius: 50%;
+        }
+
+        .princess-hair::before {
+            left: -15px;
+            top: 20px;
+        }
+
+        .princess-hair::after {
+            right: -15px;
+            top: 20px;
+        }
+
+        .princess-crown {
+            position: absolute;
+            width: 70px;
+            height: 35px;
+            background: #f4c430;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            clip-path: polygon(
+                0% 100%, 10% 20%, 20% 100%, 30% 20%, 40% 100%,
+                50% 20%, 60% 100%, 70% 20%, 80% 100%, 90% 20%, 100% 100%
+            );
+            z-index: 4;
+        }
+
+        .princess-crown::before,
+        .princess-crown::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff69b4;
+            border-radius: 50%;
+            top: 5px;
+        }
+
+        .princess-crown::before {
+            left: 10px;
+        }
+
+        .princess-crown::after {
+            right: 10px;
+        }
+
+        .crown-jewel {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #4169e1;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            z-index: 5;
+        }
+
+        .princess-neck {
+            position: absolute;
+            width: 30px;
+            height: 25px;
+            background: #ffd4a3;
+            top: 95px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 2px solid #d4a574;
+            z-index: 2;
+        }
+
+        .princess-dress {
+            position: absolute;
+            width: 140px;
+            height: 120px;
+            background: #ff69b4;
+            top: 115px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 70px 70px 0 0;
+            border: 3px solid #d4569b;
+            z-index: 1;
+        }
+
+        .princess-dress::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            background: #ff1493;
+            bottom: 0;
+            left: 0;
+            clip-path: polygon(0 0, 20% 100%, 40% 0, 60% 100%, 80% 0, 100% 100%, 100% 100%, 0 100%);
+        }
+
+        .princess-sleeve {
+            position: absolute;
+            width: 50px;
+            height: 60px;
+            background: #ff69b4;
+            top: 120px;
+            border-radius: 25px;
+            border: 2px solid #d4569b;
+        }
+
+        .princess-sleeve.left {
+            left: 15px;
+            transform: rotate(-20deg);
+        }
+
+        .princess-sleeve.right {
+            right: 15px;
+            transform: rotate(20deg);
+        }
+
+        .princess-hand {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ffd4a3;
+            border-radius: 50%;
+            top: 165px;
+            border: 2px solid #d4a574;
+            z-index: 2;
+        }
+
+        .princess-hand.left {
+            left: 20px;
+        }
+
+        .princess-hand.right {
+            right: 20px;
+        }
+
+        /* Dragón - Hecho con polígonos */
+        .dragon {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .dragon-body {
+            position: absolute;
+            width: 140px;
+            height: 90px;
+            background: #2d5016;
+            border-radius: 45px;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid #1a3009;
+            z-index: 3;
+        }
+
+        .dragon-body::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(26, 48, 9, 0.3) 10px,
+                rgba(26, 48, 9, 0.3) 12px
+            );
+            border-radius: 45px;
+        }
+
+        .dragon-head {
+            position: absolute;
+            width: 90px;
+            height: 80px;
+            background: #3d6b1f;
+            border-radius: 45px 45px 30px 30px;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid #1a3009;
+            z-index: 4;
+        }
+
+        .dragon-snout {
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            background: #4a7c2a;
+            border-radius: 30px 30px 15px 15px;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 3px solid #1a3009;
+            z-index: 5;
+        }
+
+        .dragon-snout::before,
+        .dragon-snout::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 12px;
+            background: #000;
+            border-radius: 50%;
+            top: 10px;
+        }
+
+        .dragon-snout::before {
+            left: 12px;
+        }
+
+        .dragon-snout::after {
+            right: 12px;
+        }
+
+        .dragon-horn {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 35px solid #654321;
+            top: -15px;
+            z-index: 3;
+        }
+
+        .dragon-horn:first-of-type {
+            left: 15px;
+            transform: rotate(-10deg);
+        }
+
+        .dragon-horn:last-of-type {
+            right: 15px;
+            transform: rotate(10deg);
+        }
+
+        .dragon-crest {
+            position: absolute;
+            width: 20px;
+            height: 25px;
+            background: #8b4513;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            z-index: 2;
+        }
+
+        .dragon-eye {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #ff4444;
+            border-radius: 50%;
+            top: 30px;
+            border: 3px solid #000;
+            z-index: 5;
+        }
+
+        .dragon-eye::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 16px;
+            background: #000;
+            top: 3px;
+            left: 6px;
+            border-radius: 50%;
+        }
+
+        .dragon-eye:first-of-type {
+            left: 18px;
+        }
+
+        .dragon-eye:last-of-type {
+            right: 18px;
+        }
+
+        .dragon-wing {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 90px solid #4a7c2a;
+            top: 30px;
+            left: -45px;
+            transform: rotate(-15deg);
+            z-index: 1;
+            border: 3px solid #1a3009;
+        }
+
+        .dragon-wing::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 60px solid #5a8c3a;
+            top: 10px;
+            left: -35px;
+        }
+
+        .dragon-wing-right {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-right: 60px solid transparent;
+            border-left: 25px solid transparent;
+            border-bottom: 90px solid #4a7c2a;
+            top: 30px;
+            right: -45px;
+            transform: rotate(15deg);
+            z-index: 1;
+            border: 3px solid #1a3009;
+        }
+
+        .dragon-tail {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: #2d5016;
+            border-radius: 50%;
+            top: 95px;
+            right: -50px;
+            border: 4px solid #1a3009;
+            z-index: 2;
+        }
+
+        .dragon-tail::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 35px solid #654321;
+            bottom: -25px;
+            right: 10px;
+        }
+
+        .dragon-claw {
+            position: absolute;
+            width: 30px;
+            height: 25px;
+            background: #1a3009;
+            bottom: 5px;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .dragon-claw.left {
+            left: 25px;
+        }
+
+        .dragon-claw.right {
+            right: 25px;
+        }
+
+        .dragon-claw::before,
+        .dragon-claw::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 12px solid #000;
+            bottom: -10px;
+        }
+
+        .dragon-claw::before {
+            left: 2px;
+        }
+
+        .dragon-claw::after {
+            right: 2px;
+        }
+
+        /* Torre - Hecha con polígonos */
+        .tower {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .tower-base {
+            position: absolute;
+            width: 110px;
+            height: 170px;
+            background: linear-gradient(to right, #707070 0%, #909090 50%, #707070 100%);
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid #505050;
+            z-index: 2;
+        }
+
+        .tower-base::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                transparent,
+                transparent 15px,
+                #505050 15px,
+                #505050 17px
+            ),
+            repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 25px,
+                #505050 25px,
+                #505050 27px
+            );
+        }
+
+        .tower-top {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 70px solid transparent;
+            border-right: 70px solid transparent;
+            border-bottom: 90px solid #a64d79;
+            bottom: 190px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+        }
+
+        .tower-top::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 75px solid #c65d9a;
+            bottom: 0;
+            left: -60px;
+        }
+
+        .tower-pinnacle {
+            position: absolute;
+            width: 15px;
+            height: 30px;
+            background: #f4c430;
+            bottom: 280px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 7px 7px 0 0;
+            z-index: 4;
+        }
+
+        .tower-pinnacle::before {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #f4c430;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        .tower-pinnacle::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #4169e1;
+            border-radius: 50%;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .tower-window {
+            position: absolute;
+            width: 45px;
+            height: 55px;
+            background: #4a4a4a;
+            border: 4px solid #333;
+            border-radius: 22px 22px 0 0;
+            bottom: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+        }
+
+        .tower-window::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: #333;
+            top: 50%;
+            left: 0;
+        }
+
+        .tower-window::after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 100%;
+            background: #333;
+            top: 0;
+            left: 50%;
+        }
+
+        .tower-small-window {
+            position: absolute;
+            width: 20px;
+            height: 25px;
+            background: #4a4a4a;
+            border: 3px solid #333;
+            border-radius: 10px 10px 0 0;
+            bottom: 60px;
+            z-index: 3;
+        }
+
+        .tower-small-window.left {
+            left: 20px;
+        }
+
+        .tower-small-window.right {
+            right: 20px;
+        }
+
+        .tower-door {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            background: #654321;
+            border: 3px solid #3d2812;
+            border-radius: 20px 20px 0 0;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+        }
+
+        .tower-door::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #f4c430;
+            border-radius: 50%;
+            top: 50%;
+            right: 8px;
+        }
+
+        /* Caballero - Hecho con polígonos */
+        .knight {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .knight-helmet {
+            position: absolute;
+            width: 85px;
+            height: 85px;
+            background: linear-gradient(135deg, #e0e0e0 0%, #a0a0a0 100%);
+            border-radius: 42px 42px 0 0;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid #707070;
+            z-index: 4;
+        }
+
+        .knight-helmet::before {
+            content: '';
+            position: absolute;
+            width: 70px;
+            height: 50px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #c0c0c0 100%);
+            border-radius: 35px 35px 0 0;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .knight-visor {
+            position: absolute;
+            width: 65px;
+            height: 25px;
+            background: #1a1a1a;
+            top: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 4px;
+            border: 2px solid #505050;
+            z-index: 5;
+        }
+
+        .knight-visor::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 8px,
+                #505050 8px,
+                #505050 10px
+            );
+        }
+
+        .knight-plume {
+            position: absolute;
+            width: 45px;
+            height: 70px;
+            background: linear-gradient(to bottom, #ff0000 0%, #cc0000 100%);
+            border-radius: 22px 22px 0 0;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%) skewX(-12deg);
+            z-index: 3;
+            border: 2px solid #990000;
+        }
+
+        .knight-plume::before,
+        .knight-plume::after {
+            content: '';
+            position: absolute;
+            width: 35px;
+            height: 50px;
+            background: #ff4444;
+            border-radius: 17px 17px 0 0;
+        }
+
+        .knight-plume::before {
+            left: -15px;
+            top: 10px;
+        }
+
+        .knight-plume::after {
+            right: -15px;
+            top: 10px;
+        }
+
+        .knight-neck {
+            position: absolute;
+            width: 40px;
+            height: 30px;
+            background: #505050;
+            top: 112px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 3px solid #303030;
+            z-index: 3;
+        }
+
+        .knight-body {
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            background: linear-gradient(135deg, #5080e0 0%, #2050b0 100%);
+            top: 138px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid #1040a0;
+            border-radius: 10px 10px 40px 40px;
+            z-index: 2;
+        }
+
+        .knight-body::before {
+            content: '';
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #6090f0 0%, #3060c0 100%);
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 10px;
+            border: 2px solid #1040a0;
+        }
+
+        .knight-body::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 15px;
+            background: #654321;
+            bottom: 25px;
+            left: 0;
+            border-top: 2px solid #3d2812;
+            border-bottom: 2px solid #3d2812;
+        }
+
+        .knight-shield {
+            position: absolute;
+            width: 55px;
+            height: 70px;
+            background: linear-gradient(135deg, #f4d430 0%, #d4b420 100%);
+            border-radius: 27px 27px 0 27px;
+            top: 145px;
+            right: -25px;
+            border: 4px solid #b49410;
+            z-index: 3;
+        }
+
+        .knight-shield::before {
+            content: '';
+            position: absolute;
+            width: 35px;
+            height: 45px;
+            background: #ff0000;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            clip-path: polygon(50% 0%, 100% 35%, 50% 100%, 0% 35%);
+        }
+
+        .knight-shield::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #808080;
+            border-radius: 50%;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 
+                0 45px 0 #808080,
+                -15px 22px 0 #808080,
+                15px 22px 0 #808080;
+        }
+
+        .knight-arm {
+            position: absolute;
+            width: 35px;
+            height: 80px;
+            background: linear-gradient(to bottom, #5080e0 0%, #2050b0 100%);
+            top: 145px;
+            border: 3px solid #1040a0;
+            border-radius: 17px;
+            z-index: 1;
+        }
+
+        .knight-arm.left {
+            left: -5px;
+            transform: rotate(-25deg);
+        }
+
+        .knight-arm.right {
+            right: -5px;
+            transform: rotate(25deg);
+        }
+
+        .knight-sword {
+            position: absolute;
+            width: 12px;
+            height: 110px;
+            background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 80%, #8b4513 80%, #8b4513 100%);
+            top: 70px;
+            left: -20px;
+            transform: rotate(-50deg);
+            border: 3px solid #808080;
+            z-index: 5;
+        }
+
+        .knight-sword::before {
+            content: '';
+            position: absolute;
+            width: 35px;
+            height: 15px;
+            background: #654321;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 5px;
+            border: 2px solid #3d2812;
+        }
+
+        .knight-sword::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #f4c430;
+            border-radius: 50%;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 3px solid #d4a520;
+        }
+
+        .sword-tip {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 20px solid #e0e0e0;
+            top: 60px;
+            left: -23px;
+            transform: rotate(-50deg);
+            z-index: 5;
+        }
+
+        /* Corazón - Victoria */
+        .heart {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .heart-shape {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            background: #ff1744;
+            transform: rotate(45deg);
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .heart-shape::before,
+        .heart-shape::after {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: #ff1744;
+            border-radius: 50%;
+        }
+
+        .heart-shape::before {
+            top: -60px;
+            left: 0;
+        }
+
+        .heart-shape::after {
+            left: 60px;
+            top: 0;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: rotate(45deg) scale(1); }
+            50% { transform: rotate(45deg) scale(1.1); }
+        }
+
+        /* Batalla - Espadas cruzadas */
+        .battle {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .crossed-swords {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .sword {
+            position: absolute;
+            width: 15px;
+            height: 140px;
+            background: linear-gradient(to bottom, #c0c0c0 0%, #c0c0c0 80%, #8b4513 80%, #8b4513 100%);
+            border: 2px solid #808080;
+            top: 50%;
+            left: 50%;
+        }
+
+        .sword:first-child {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        .sword:last-child {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .sword::before {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 12px;
+            background: #8b4513;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .sword::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #f4c430;
+            border-radius: 50%;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Navegación actualizada */
+        .navigation {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s 1.5s;
+        }
+
+        .book-container.opened ~ .navigation {
+            opacity: 1;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Georgia', serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #654321 0%, #8b4513 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-indicator {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            background: rgba(139, 69, 19, 0.9);
+            color: #d4af37;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-family: 'Georgia', serif;
+            border: 2px solid #d4af37;
+            opacity: 0;
+            transition: opacity 0.5s 1.5s;
+            z-index: 100;
+        }
+
+        .book-container.opened ~ .page-indicator {
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .book-container {
+            animation: fadeIn 0.8s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="click-message" id="clickMessage">
+        Haz clic en el libro para abrirlo
+    </div>
+
+    <div class="book-container closed" id="bookContainer">
+        <div class="book">
+            <!-- Lomo del libro -->
+            <div class="book-spine"></div>
+            
+            <!-- Contratapa siempre visible -->
+            <div class="back-cover"></div>
+
+            <!-- Página 1: Portada -->
+            <div class="page" id="page-cover">
+                <div class="page-front cover-front">
+                    <div class="book-cover-title">
+                        El Rescate<br>de la<br>Princesa
+                    </div>
+                </div>
+                <div class="page-back">
+                    <!-- Reverso de portada en blanco (solo color café) -->
+                </div>
+            </div>
+
+            <!-- Página 2: Capítulo 1 -->
+            <div class="page" id="page-1">
+                <div class="page-front">
+                    <div class="page-content">
+                        <h2 class="page-title">Capítulo I</h2>
+                        <h3 style="color: #8b4513; font-size: 22px;">La Princesa Aurora</h3>
+                        <div class="character-container">
+                            <div class="princess">
+                                <div class="princess-head"></div>
+                                <div class="princess-hair"></div>
+                                <div class="princess-crown"></div>
+                                <div class="crown-jewel"></div>
+                                <div class="princess-neck"></div>
+                                <div class="princess-dress"></div>
+                                <div class="princess-sleeve left"></div>
+                                <div class="princess-sleeve right"></div>
+                                <div class="princess-hand left"></div>
+                                <div class="princess-hand right"></div>
+                            </div>
+                        </div>
+                        <p class="page-description">
+                            Érase una vez, en un reino lejano, una hermosa princesa llamada Aurora que vivía feliz en su magnífico castillo.
+                        </p>
+                    </div>
+                </div>
+                <div class="page-back">
+                    <div class="page-content">
+                        <p class="page-description" style="margin-top: 80px;">
+                            Sus días transcurrían entre jardines floridos y salones dorados. Era querida por todos en el reino por su bondad y gracia.
+                        </p>
+                        <p class="page-description" style="margin-top: 60px; font-style: italic; color: #8b4513;">
+                            Pero un día oscuro se acercaba al reino...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Página 3: Capítulo 2 - Dragón -->
+            <div class="page" id="page-2">
+                <div class="page-front">
+                    <div class="page-content">
+                        <h2 class="page-title">Capítulo II</h2>
+                        <h3 style="color: #8b4513; font-size: 22px;">El Dragón Malvado</h3>
+                        <div class="character-container">
+                            <div class="dragon">
+                                <div class="dragon-wing"></div>
+                                <div class="dragon-wing-right"></div>
+                                <div class="dragon-body"></div>
+                                <div class="dragon-head">
+                                    <div class="dragon-snout"></div>
+                                    <div class="dragon-horn"></div>
+                                    <div class="dragon-horn"></div>
+                                    <div class="dragon-crest"></div>
+                                    <div class="dragon-eye"></div>
+                                    <div class="dragon-eye"></div>
+                                    <div class="dragon-claw left"></div>
+                                    <div class="dragon-claw right"></div>
+                                </div>
+                                <div class="dragon-tail"></div>
+                            </div>
+                        </div>
+                        <p class="page-description">
+                            Un temible dragón descendió desde las montañas, con sus ojos rojos brillando y su aliento de fuego.
+                        </p>
+                    </div>
+                </div>
+                <div class="page-back">
+                    <div class="page-content">
+                        <h3 style="color: #8b4513; font-size: 22px; margin-top: 40px;">La Torre Oscura</h3>
+                        <div class="character-container">
+                            <div class="tower">
+                                <div class="tower-base"></div>
+                                <div class="tower-window"></div>
+                                <div class="tower-small-window left"></div>
+                                <div class="tower-small-window right"></div>
+                                <div class="tower-door"></div>
+                                <div class="tower-top"></div>
+                                <div class="tower-pinnacle"></div>
+                            </div>
+                        </div>
+                        <p class="page-description">
+                            El dragón capturó a la princesa y la encerró en lo alto de una torre oscura, donde nadie podía alcanzarla.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Página 4: Capítulo 3 - Caballero -->
+            <div class="page" id="page-3">
+                <div class="page-front">
+                    <div class="page-content">
+                        <h2 class="page-title">Capítulo III</h2>
+                        <h3 style="color: #8b4513; font-size: 22px;">El Valiente Caballero</h3>
+                        <div class="character-container">
+                            <div class="knight">
+                                <div class="knight-helmet">
+                                    <div class="knight-visor"></div>
+                                    <div class="knight-plume"></div>
+                                </div>
+                                <div class="knight-neck"></div>
+                                <div class="knight-body"></div>
+                                <div class="knight-arm left"></div>
+                                <div class="knight-arm right"></div>
+                                <div class="knight-shield"></div>
+                                <div class="knight-sword"></div>
+                                <div class="sword-tip"></div>
+                            </div>
+                        </div>
+                        <p class="page-description">
+                            Un noble caballero escuchó el llamado de auxilio y emprendió el peligroso viaje para rescatar a la princesa.
+                        </p>
+                    </div>
+                </div>
+                <div class="page-back">
+                    <div class="page-content">
+                        <h3 style="color: #8b4513; font-size: 22px; margin-top: 20px;">La Épica Batalla</h3>
+                        <div class="character-container">
+                            <div class="battle">
+                                <div class="crossed-swords">
+                                    <div class="sword"></div>
+                                    <div class="sword"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="page-description">
+                            El caballero enfrentó al dragón en una batalla legendaria. Su coraje y habilidad prevalecieron sobre la bestia.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Página 5: Final Feliz -->
+            <div class="page" id="page-4">
+                <div class="page-front">
+                    <div class="page-content">
+                        <h2 class="page-title">Final Feliz</h2>
+                        <h3 style="color: #8b4513; font-size: 22px;">El Rescate</h3>
+                        <div class="character-container">
+                            <div class="princess">
+                                <div class="princess-head"></div>
+                                <div class="princess-hair"></div>
+                                <div class="princess-crown"></div>
+                                <div class="crown-jewel"></div>
+                                <div class="princess-neck"></div>
+                                <div class="princess-dress"></div>
+                                <div class="princess-sleeve left"></div>
+                                <div class="princess-sleeve right"></div>
+                                <div class="princess-hand left"></div>
+                                <div class="princess-hand right"></div>
+                            </div>
+                        </div>
+                        <p class="page-description">
+                            El caballero rescató a la princesa de la torre y juntos regresaron al castillo.
+                        </p>
+                    </div>
+                </div>
+                <div class="page-back">
+                    <div class="page-content">
+                        <h3 style="color: #8b4513; font-size: 22px; margin-top: 40px;">Para Siempre</h3>
+                        <div class="character-container">
+                            <div class="heart">
+                                <div class="heart-shape"></div>
+                            </div>
+                        </div>
+                        <p class="page-description">
+                            El reino celebró su regreso con una gran fiesta. La princesa y el caballero vivieron felices para siempre.
+                        </p>
+                        <p class="page-description" style="margin-top: 30px; font-style: italic; color: #8b4513; font-size: 24px;">
+                            FIN
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-indicator" id="pageIndicator">Página 0 de 8</div>
+
+    <div class="navigation">
+        <button class="nav-button" id="prevButton" disabled>Anterior</button>
+        <button class="nav-button" id="nextButton">Siguiente</button>
+    </div>
+
+    <script>
+        let currentPageIndex = 0;
+        const totalPages = 8;
+        let bookOpened = false;
+        let isFlipping = false;
+
+        const bookContainer = document.getElementById('bookContainer');
+        const clickMessage = document.getElementById('clickMessage');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const pageIndicator = document.getElementById('pageIndicator');
+
+        const pages = [
+            document.getElementById('page-cover'),
+            document.getElementById('page-1'),
+            document.getElementById('page-2'),
+            document.getElementById('page-3'),
+            document.getElementById('page-4')
+        ];
+
+        // Abrir el libro (solo la primera vez)
+        bookContainer.addEventListener('click', function(e) {
+            if (!bookOpened && currentPageIndex === 0) {
+                e.stopPropagation();
+                openBook();
+            }
+        });
+
+        function openBook() {
+            bookOpened = true;
+            isFlipping = true;
+            bookContainer.classList.remove('closed');
+            bookContainer.classList.add('opened');
+            clickMessage.classList.add('hidden');
+            
+            // Voltear la portada automáticamente
+            setTimeout(() => {
+                pages[0].classList.add('flipped');
+                currentPageIndex = 1;
+                isFlipping = false;
+                updateNavigation();
+            }, 500);
+        }
+
+        // Navegación - Siguiente
+        nextButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (isFlipping || currentPageIndex >= totalPages) return;
+            
+            flipToNext();
+        });
+
+        // Navegación - Anterior
+        prevButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (isFlipping || currentPageIndex <= 1) return;
+            
+            flipToPrevious();
+        });
+
+        function flipToNext() {
+            if (isFlipping) return;
+            
+            isFlipping = true;
+            
+            // Añadir clase flipping para animación de contenido
+            const pageToFlipForAnimation = Math.floor(currentPageIndex / 2);
+            if (pageToFlipForAnimation < pages.length) {
+                pages[pageToFlipForAnimation].classList.add('flipping');
+            }
+            
+            currentPageIndex++;
+            updateNavigation();
+            
+            // Voltear SOLO cuando la nueva página es PAR
+            if (currentPageIndex % 2 === 0) {
+                const pageToFlip = (currentPageIndex / 2);
+                if (pageToFlip < pages.length) {
+                    pages[pageToFlip].classList.add('flipped');
+                }
+            }
+            
+            setTimeout(() => {
+                if (pageToFlipForAnimation < pages.length) {
+                    pages[pageToFlipForAnimation].classList.remove('flipping');
+                }
+                isFlipping = false;
+            }, 1200);
+        }
+
+        function flipToPrevious() {
+            if (isFlipping) return;
+            
+            isFlipping = true;
+            
+            // Añadir clase flipping para animación de contenido
+            const pageToFlipForAnimation = Math.floor(currentPageIndex / 2);
+            if (pageToFlipForAnimation < pages.length) {
+                pages[pageToFlipForAnimation].classList.add('flipping');
+            }
+            
+            currentPageIndex--;
+            updateNavigation();
+            
+            // Des-voltear SOLO cuando la nueva página es IMPAR
+            if (currentPageIndex % 2 === 1) {
+                const pageToFlip = Math.floor((currentPageIndex + 1) / 2);
+                if (pageToFlip < pages.length) {
+                    pages[pageToFlip].classList.remove('flipped');
+                }
+            }
+            
+            setTimeout(() => {
+                if (pageToFlipForAnimation < pages.length) {
+                    pages[pageToFlipForAnimation].classList.remove('flipping');
+                }
+                isFlipping = false;
+            }, 1200);
+        }
+
+        function updateNavigation() {
+            prevButton.disabled = currentPageIndex <= 1;
+            nextButton.disabled = currentPageIndex >= totalPages;
+            
+            if (currentPageIndex === 0) {
+                pageIndicator.textContent = 'Libro cerrado';
+            } else {
+                pageIndicator.textContent = `Página ${currentPageIndex} de ${totalPages}`;
+            }
+        }
+
+        updateNavigation();
+    </script>
+</body>
+</html>

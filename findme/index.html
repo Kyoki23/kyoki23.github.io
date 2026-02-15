@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encuentra las letras <3</title>
+    <link rel="stylesheet" href="findme.css">
+    <script src="findme.js" type="text/javascript" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="welcomeScreen">
+        <div class="welcome-container">
+            <h1 class="welcome-title">Busca la palabra</h1>
+            <p class="welcome-text">
+                ¿Cómo la estás pasando? Espero que bien ^^<br>
+                Me pregunto si ahora que estás leyendo esto estaré junto a ti y viendo como haces las cosas o si por el contrario lo estarás visitando tu sola...
+                Casi acabas, tu objetivo es explorar la pantalla moviendo el cursor para revelar 6
+                letras ocultas entre las partículas.<br>
+                Una vez que las encuentres todas, deberás ordenarlas correctamente para formar como palabra el codigo que tuviste que haber copiado<br>
+                ¿Todo listo?
+            </p>
+            <button class="welcome-button" onclick="startGame()">¡Comenzar!</button>
+        </div>
+    </div>
+
+    <canvas id="particleCanvas"></canvas>
+
+    <div id="progressBar">
+        Encuentra las letras
+    </div>
+
+    <div id="letterContainer"></div>
+
+    <div id="gamePanel">
+        <h2>Forma la palabra correcta</h2>
+        <div id="collectedLetters"></div>
+        <div id="wordSlots">
+            <div class="word-slot" data-index="0"></div>
+            <div class="word-slot" data-index="1"></div>
+            <div class="word-slot" data-index="2"></div>
+            <div class="word-slot" data-index="3"></div>
+            <div class="word-slot" data-index="4"></div>
+            <div class="word-slot" data-index="5"></div>
+        </div>
+        <button id="checkButton" disabled>Verificar Palabra</button>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay">
+        <div id="modal" class="modal">
+            <h1 id="modalTitle"></h1>
+            <p id="modalMessage"></p>
+            <button id="modalButton">Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const audio = new Audio("nghyb.mp3");
+            audio.volume = 0.5;
+            audio.loop = true;
+
+            const reproducir = () => {
+                audio.play();
+                document.removeEventListener("click", reproducir);
+                document.removeEventListener("touchstart", reproducir);
+            };
+
+            document.addEventListener("click", reproducir);
+            document.addEventListener("touchstart", reproducir);
+        });
+    </script>
+</body>
+
+</html>
