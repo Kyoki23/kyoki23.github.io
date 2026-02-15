@@ -1,0 +1,167 @@
+:root {
+    --color-fondo-gradiente-1: #d4a6ff;
+    --color-fondo-gradiente-2: #fc8eeb;
+    --color-carta: #fdfbfb;
+    --color-sello: #cf425c;
+    --color-sello-especial: #8B1538;
+    --color-sombra-fuerte: rgba(0, 0, 0, 0.25);
+    --color-sombra-suave: rgba(0, 0, 0, 0.1);
+    --color-texto: #3a3a3a;
+    --fuente-titulo: 'Great Vibes', cursive;
+    --fuente-fecha: 'Lora', serif;
+    --fuente-carta: 'Parisienne', cursive;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--color-fondo-gradiente-1) 0%, var(--color-fondo-gradiente-2) 100%);
+    font-family: var(--fuente-fecha);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    background: linear-gradient(135deg, #f4f1e8 0%, #f0ead6 25%, #ede4c8 50%, #e8ddb5 75%, #e3d6a7 100%);
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(139, 69, 19, 0.03) 2px, transparent 2px),
+        radial-gradient(circle at 80% 70%, rgba(160, 82, 45, 0.04) 3px, transparent 3px),
+        radial-gradient(circle at 40% 80%, rgba(139, 69, 19, 0.02) 1px, transparent 1px);
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255);
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow:
+        inset 3px 3px 8px rgba(101, 67, 33, 0.15),
+        inset -3px -3px 8px rgba(101, 67, 33, 0.15),
+        0 8px 30px var(--color-sombra-fuerte);
+    clip-path: polygon(1% 0%, 99% 2%, 98% 15%, 100% 60%, 95% 45%,
+            100% 60%, 98% 75%, 99% 90%, 94% 100%,
+            75% 98%, 60% 100%, 50% 97%, 40% 99%,
+            25% 96%, 6% 98%, 0% 85%, 2% 70%,
+            0% 55%, 3% 40%, 0% 25%, 1% 10%);
+    text-align: center;
+}
+
+.header h1 {
+    font-family: var(--fuente-titulo);
+    font-size: 3rem;
+    color: var(--color-sello);
+    text-shadow: 3px 3px 10px var(--color-sombra-fuerte);
+}
+
+.error-code {
+    font-family: var(--fuente-titulo);
+    font-size: 8rem;
+    color: var(--color-sello);
+    text-shadow: 4px 4px 15px var(--color-sombra-fuerte);
+    line-height: 1;
+    margin-bottom: 2%;
+    animation: flotar 3s ease-in-out infinite;
+}
+
+@keyframes flotar {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.error-card {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.error-card h2 {
+    font-family: var(--fuente-titulo);
+    font-size: 2.5rem;
+    color: var(--color-sello);
+    text-shadow: 2px 2px 8px var(--color-sombra-suave);
+}
+
+.error-card p {
+    font-family: var(--fuente-fecha);
+    font-size: 1.2rem;
+    color: var(--color-texto);
+    line-height: 1.8;
+    text-align: center;
+}
+
+.error-card .mensaje-carta {
+    font-family: var(--fuente-carta);
+    font-size: 1.6rem;
+    color: var(--color-sello-especial);
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.back-btn {
+    display: inline-block;
+    width: 100%;
+    padding: 15px;
+    font-family: var(--fuente-fecha);
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, var(--color-sello), var(--color-sello-especial));
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--color-sombra-suave);
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--color-sombra-fuerte);
+}
+
+.back-btn:active {
+    transform: translateY(0);
+}
+
+.decoracion {
+    font-size: 2rem;
+    margin-bottom: 1%;
+    color: var(--color-sello);
+    opacity: 0.6;
+    user-select: none;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 2%;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .error-code {
+        font-size: 5rem;
+    }
+
+    .error-card h2 {
+        font-size: 2rem;
+    }
+
+    .error-card p {
+        font-size: 1rem;
+    }
+
+    .error-card .mensaje-carta {
+        font-size: 1.3rem;
+    }
+}

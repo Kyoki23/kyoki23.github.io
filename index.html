@@ -1,14 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='main.js'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lora:ital,wght@1,400&family=Parisienne&display=swap"
+        rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💌</text></svg>">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lora:wght@400;500&family=Cormorant+Garamond:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js" type="text/javascript" defer></script>
+    <title>Para mi Leyley</title>
+
 </head>
+
 <body>
-    chismosa, le dije que no vea la pagina owo
+    <div id="welcomeScreen">
+        <div class="welcome-container">
+            <h1 class="welcome-title">No abrir hasta San Valentín</h1>
+            <p class="welcome-subtitle">Algo te espera... ¿Pero es el momento?</p>
+            <p class="welcome-text">
+            <p>¡Hola Lily! Si estás leyendo esto otro día que no sea 14 de febrero, por favor, retirate de aqui</p><br>
+            <p>En caso de que se nos sea imposible comunicarnos el 14 de febrero, o que yo personalmente te haya enviado esto, entonces si puedes continuar, abra su
+                último regalo, de manera adelantada ^^</p> <br>
+            <p>- Alex</p> <br>
+            </p>
+            <button class="welcome-button" onclick="mostrarCalendario()">Abrir mi regalo ♥</button>
+        </div>
+    </div>
+    <!--<div id="welcomeScreen">
+        <div class="welcome-container">
+            <h1 class="welcome-title">Felíz San Valentín</h1>
+            <p class="welcome-subtitle">¿Qué te esperará?...</p>
+            <p class="welcome-text">
+                <p>Hola Lily, me pregunto cuando será que leas esto, lo suyo sería que el 14, pero depende tus tiempo puede que veas esto otro día... Independientemente del día que estés viendo esto, quiero decirte lo siguiente:</p><br>
+                <p>Le amo mucho, lo sabes ya, ¿no?, puede que algún día te preguntes ¿Pero qué tanto me 'ama'? Y esa es una respuesta que ahora mismo te daré.</p><br>
+                <p>Es por eso que creé esta página, para que sepas lo mucho que te amo, ¡Disfruta!</p><br>
+                <p>- Alex</p> <br>
+            </p>
+            <button class="welcome-button" onclick="mostrarCalendario()">Abrir mi regalo ♥</button>
+        </div>
+    </div>-->
+
+    <div id="mainContent">
+        <div class="overlay" id="overlay"></div>
+
+        <div class="header">
+            <h1>Un "te amo" por cada día, para ti, mi amor ‹3</h1>
+            <a href="/flowers/" style="text-decoration: none;">🌹</a>
+            <div class="month-navigation">
+                <button class="nav-arrow" id="prevMonth">‹</button>
+                <div class="month-display" id="monthDisplay">Muak</div>
+                <button class="nav-arrow" id="nextMonth">›</button>
+            </div>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const audio = new Audio("seasons.mp3");
+            audio.volume = 0.5;
+            audio.loop = true;
+
+            const reproducir = () => {
+                audio.play();
+                document.removeEventListener("click", reproducir);
+                document.removeEventListener("touchstart", reproducir);
+            };
+
+            document.addEventListener("click", reproducir);
+            document.addEventListener("touchstart", reproducir);
+        });
+    </script>
 </body>
+
 </html>
