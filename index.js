@@ -269,7 +269,7 @@ function actualizarCalendario() {
                                     <p class="saludo">Para Leslie,</p>
                                     <p class="cuerpo-feb14">${mensaje}</p>
                                     <div class="bloque-firma">
-                                        <img src="./fotito.png" alt="Aquí hubiera estado una foto juntos jsjs ^^" class="imagen-recuerdo">
+                                        <img src="fotito.png" alt="Aquí hubiera estado una foto juntos jsjs ^^" class="imagen-recuerdo">
                                         <p class="firma">Con mucho amor,<br>Alex</p>
                                     </div>
                                 </div>
